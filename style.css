@@ -1,0 +1,208 @@
+:root {
+  --cw-yellow: #FFC907;
+  --cw-blue: #2E9DF7;
+  --cw-dark: #182026;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(to bottom, var(--cw-blue) 0%, #0c4a75 100%);
+  color: white;
+  min-height: 100vh;
+}
+
+.brand-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cw-dark);
+  padding: 10px 16px;
+  font-size: 0.9rem;
+}
+
+.jerry-can {
+  color: var(--cw-yellow);
+  font-size: 1.1rem;
+}
+
+.game-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  letter-spacing: 4px;
+  color: var(--cw-yellow);
+  text-shadow: 2px 2px 0 var(--cw-dark);
+  margin: 10px 0 20px;
+}
+
+.battle-scene {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid var(--cw-yellow);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-row h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.timer {
+  background: var(--cw-dark);
+  color: var(--cw-yellow);
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.hp-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.hp-block {
+  flex: 1;
+  text-align: left;
+}
+
+.hp-block label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+progress {
+  width: 100%;
+  height: 16px;
+}
+
+.feedback {
+  min-height: 24px;
+  font-weight: bold;
+  color: var(--cw-yellow);
+}
+
+.moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.move-btn {
+  flex: 1 1 100px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--cw-yellow);
+  color: var(--cw-dark);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.move-btn:hover { transform: scale(1.05); }
+.move-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.coins { font-weight: bold; }
+
+#resetBtn {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.banner {
+  margin-top: 20px;
+  background: var(--cw-yellow);
+  color: var(--cw-dark);
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 16px;
+  border-radius: 10px;
+  animation: pop 0.4s ease;
+}
+
+.hidden { display: none; }
+
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Confetti (Celebrate Wins LevelUp) */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  animation-name: confettiFall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* Responsive: wider layout for tablets/desktop */
+@media (min-width: 700px) {
+  .game-container {
+    max-width: 640px;
+  }
+  .battle-scene {
+    padding: 32px;
+  }
+  .game-title {
+    font-size: 3.5rem;
+  }
+  .moves {
+    flex-wrap: nowrap;
+  }
+}
