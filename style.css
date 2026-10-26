@@ -2,14 +2,17 @@
   --cw-yellow: #FFC907;
   --cw-blue: #2E9DF7;
   --cw-dark: #182026;
+  --grass: #6fcc53;
+  --grass-dark: #5bb843;
+  --trees: #2f8f3e;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(to bottom, var(--cw-blue) 0%, #0c4a75 100%);
+  font-family: 'Baloo 2', 'Segoe UI', Arial, sans-serif;
+  background: #0c4a75;
   color: white;
   min-height: 100vh;
 }
@@ -19,232 +22,417 @@ body {
   align-items: center;
   gap: 8px;
   background: var(--cw-dark);
-  padding: 10px 16px;
-  font-size: 0.9rem;
+  padding: 8px 16px;
+  font-size: 0.85rem;
 }
 
-.jerry-can {
-  color: var(--cw-yellow);
-  font-size: 1.1rem;
-}
+.jerry-can { color: var(--cw-yellow); font-size: 1rem; }
 
 .game-container {
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px;
-  text-align: center;
+  padding: 16px;
 }
 
-.game-title {
-  font-size: 2.5rem;
-  letter-spacing: 4px;
-  color: var(--cw-yellow);
-  text-shadow: 2px 2px 0 var(--cw-dark);
-  margin: 10px 0 20px;
+/* ---- The battle scene card ---- */
+.scene {
+  position: relative;
+  border: 3px solid var(--cw-dark);
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 14px;
+  background:
+    repeating-radial-gradient(circle at 20% 15%, #276e30 0 8px, transparent 9px 20px),
+    repeating-radial-gradient(circle at 70% 10%, #276e30 0 7px, transparent 8px 18px),
+    linear-gradient(to bottom, var(--trees) 0%, var(--trees) 34%, var(--grass) 34%, var(--grass) 100%);
 }
 
-.battle-scene {
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid var(--cw-yellow);
-  border-radius: 12px;
-  padding: 20px;
+.heart-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: #FF5C5C;
+  display: block;
 }
 
+.heart-icon.box {
+  background: #FF7A59;
+  border: 2px solid var(--cw-dark);
+  border-radius: 6px;
+  padding: 4px 7px;
+  display: inline-flex;
+}
+
+.heart-icon.small {
+  background: #FF7A59;
+  border: 2px solid var(--cw-dark);
+  border-radius: 5px;
+  padding: 3px 5px;
+  display: inline-flex;
+}
+
+/* ---- Top row: name banner + timer ---- */
 .top-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
 }
 
-.top-row h2 {
+.name-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(70, 60, 100, 0.88);
+  border: 3px solid var(--cw-dark);
+  border-radius: 8px;
+  padding: 5px 12px 5px 6px;
+}
+
+.name-banner h2 {
   margin: 0;
-  font-size: 1.1rem;
-  text-align: left;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
 }
 
 .timer {
   background: var(--cw-dark);
   color: var(--cw-yellow);
-  font-weight: bold;
-  padding: 4px 10px;
+  font-weight: 800;
+  padding: 5px 10px;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   white-space: nowrap;
 }
 
-.hp-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 16px 0;
+/* ---- Enemy HP strip ---- */
+.hp-strip {
+  position: relative;
+  z-index: 2;
+  margin: 10px 2px 0;
 }
 
-.hp-block {
-  flex: 1;
-  text-align: left;
-}
-
-.hp-block label {
+.hp-strip label {
   display: block;
-  font-size: 0.8rem;
-  margin-bottom: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 var(--cw-dark);
+  margin-bottom: 3px;
 }
 
 progress {
   width: 100%;
-  height: 16px;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
 }
+progress::-webkit-progress-bar { background: rgba(0,0,0,0.3); border-radius: 7px; }
+progress::-webkit-progress-value { background: #FF5C5C; border-radius: 7px; }
+progress::-moz-progress-bar { background: #FF5C5C; border-radius: 7px; }
 
-/* Battle arena with the monster + player sprites */
-.arena {
+/* ---- Battlefield: ogre + decor ---- */
+.battlefield {
+  position: relative;
+  height: 230px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 10px 0 16px;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 6px;
 }
 
-.combatant {
+.ogre {
+  font-size: 8.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 8px 6px rgba(0,0,0,0.35));
+  z-index: 3;
+}
+
+.ogre.hit { animation: shakeOgre 0.35s ease; }
+
+@keyframes shakeOgre {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px) rotate(-2deg); }
+  50% { transform: translateX(8px) rotate(2deg); }
+  75% { transform: translateX(-5px); }
+}
+
+.well {
+  position: absolute;
+  right: 6px;
+  bottom: 10px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(#b0b0b0 0deg 12deg, #8c8c8c 12deg 24deg);
+  border: 4px solid #5a5a5a;
+  z-index: 1;
+}
+.well::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1c3b57 0%, #0c4a75 70%, #0a3a5c 100%);
+}
+
+.bush {
+  position: absolute;
+  left: 4px;
+  bottom: 6px;
+  width: 85px;
+  height: 46px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(circle at 35% 35%, #4fcb53 0%, #2f8f3e 70%);
+  border: 2px solid rgba(0,0,0,0.15);
+  z-index: 1;
+}
+
+/* Slash attack effect over the ogre */
+.slash-fx {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.slash-fx .slash {
+  position: absolute;
+  width: 8px;
+  height: 150%;
+  background: linear-gradient(to bottom, transparent, #FF2A2A 15%, #FF2A2A 85%, transparent);
+  border-radius: 4px;
+  top: -25%;
+  opacity: 0;
+}
+
+.slash-fx.show .slash {
+  animation: slashSweep 0.35s ease forwards;
+}
+
+.s1 { left: 25%; transform: rotate(-20deg); }
+.s2 { left: 48%; transform: rotate(-20deg); animation-delay: 0.05s !important; }
+.s3 { left: 71%; transform: rotate(-20deg); animation-delay: 0.1s !important; }
+
+@keyframes slashSweep {
+  0% { opacity: 0; transform: rotate(-20deg) scaleY(0.3); }
+  40% { opacity: 1; transform: rotate(-20deg) scaleY(1.05); }
+  100% { opacity: 0; transform: rotate(-20deg) scaleY(1); }
+}
+
+.damage-pop {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  color: #FFF275;
+  text-shadow: 2px 2px 0 var(--cw-dark);
+  animation: floatUp 0.8s ease forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-34px); }
+}
+
+/* ---- Feedback text ---- */
+.feedback {
+  position: relative;
+  z-index: 2;
+  min-height: 22px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 2px 2px 0 var(--cw-dark);
+  margin: 4px 2px 10px;
+}
+
+/* ---- Bottom row: moves + stats ---- */
+.bottom-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.moves-col {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.enemy-side { align-items: flex-start; }
-.player-side { align-items: flex-end; }
-
-.vs-divider {
-  font-weight: bold;
-  color: var(--cw-yellow);
-  font-size: 0.9rem;
-  padding: 0 4px;
-}
-
-.sprite-stage {
-  position: relative;
-  width: 100%;
-  height: 90px;
+.move-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.sprite {
-  font-size: 4rem;
-  line-height: 1;
-  user-select: none;
-}
-
-.enemy-sprite { transform: scaleX(-1); } /* face the player */
-
-/* Monster shakes when YOU hit it */
-.sprite.hit {
-  animation: shake 0.35s ease;
-}
-
-/* Attacker lunges toward its target */
-.sprite.attack-enemy {
-  animation: lungeRight 0.4s ease;
-}
-.sprite.attack-player {
-  animation: lungeLeft 0.4s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: scaleX(-1) translateX(0); }
-  25% { transform: scaleX(-1) translateX(-6px); }
-  50% { transform: scaleX(-1) translateX(6px); }
-  75% { transform: scaleX(-1) translateX(-4px); }
-}
-
-@keyframes lungeRight {
-  0% { transform: scaleX(-1) translateX(0); }
-  50% { transform: scaleX(-1) translateX(24px); }
-  100% { transform: scaleX(-1) translateX(0); }
-}
-
-@keyframes lungeLeft {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(-24px); }
-  100% { transform: translateX(0); }
-}
-
-.damage-pop {
-  position: absolute;
-  top: 0;
-  font-weight: bold;
-  font-size: 1.3rem;
-  color: #FF5C5C;
-  text-shadow: 1px 1px 0 var(--cw-dark);
-  animation: floatUp 0.8s ease forwards;
-  pointer-events: none;
-}
-
-@keyframes floatUp {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-30px); }
-}
-
-.feedback {
-  min-height: 24px;
-  font-weight: bold;
-  color: var(--cw-yellow);
-}
-
-.moves {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin: 16px 0;
-}
-
-.move-btn {
-  flex: 1 1 100px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: var(--cw-yellow);
-  color: var(--cw-dark);
-  font-weight: bold;
-  font-size: 1rem;
+  gap: 8px;
+  background: linear-gradient(to right, #7fc25c 0%, #7fc25c 72%, #5aa83e 72%, #5aa83e 100%);
+  border: 3px solid var(--cw-dark);
+  border-radius: 18px;
+  padding: 8px 12px;
+  color: white;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   cursor: pointer;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
   transition: transform 0.1s ease;
 }
 
-.move-btn:hover { transform: scale(1.05); }
+.move-btn:hover { transform: scale(1.03); }
 .move-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.stats-col {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-hp-card {
+  position: relative;
+  background: rgba(24, 32, 38, 0.6);
+  border: 2px solid var(--cw-dark);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.player-hp-card label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.scene.screen-hit { animation: screenFlash 0.3s ease; }
+@keyframes screenFlash {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgba(255,0,0,0); }
+  40% { box-shadow: inset 0 0 0 10px rgba(255,40,40,0.6); }
+}
+
+.supplies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  background: var(--cw-blue);
+  border: 3px solid var(--cw-dark);
+  border-radius: 8px;
+  padding: 7px;
+}
+
+.supplies-grid span {
+  height: 20px;
+  border-radius: 4px;
+  background: #FF902A;
+  border: 2px solid var(--cw-dark);
+}
 
 .status-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
+  justify-content: space-between;
+  gap: 6px;
 }
 
-.coins { font-weight: bold; }
+.coins {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: var(--cw-dark);
+  padding: 5px 9px;
+  border-radius: 14px;
+}
+
+.coin-icon {
+  background: var(--cw-yellow);
+  color: var(--cw-dark);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
 
 #resetBtn {
   background: transparent;
-  border: 1px solid white;
+  border: 2px solid white;
   color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 0.75rem;
   cursor: pointer;
 }
 
-.banner {
-  margin-top: 20px;
+/* ---- End-of-battle popup ---- */
+.end-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 16, 20, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 60;
+}
+
+.end-modal-card {
+  background: var(--cw-dark);
+  border: 4px solid var(--cw-yellow);
+  border-radius: 14px;
+  padding: 28px 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  animation: pop 0.35s ease;
+}
+
+.end-modal-emoji {
+  font-size: 2.6rem;
+  margin: 0 0 8px;
+}
+
+.end-modal-card h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  color: white;
+}
+
+.end-modal-coins {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--cw-yellow);
+  margin: 0 0 20px;
+}
+
+#tryAgainBtn {
   background: var(--cw-yellow);
   color: var(--cw-dark);
-  font-size: 1.3rem;
-  font-weight: bold;
-  padding: 16px;
-  border-radius: 10px;
-  animation: pop 0.4s ease;
+  border: none;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 10px 24px;
+  border-radius: 20px;
+  cursor: pointer;
 }
+
+#tryAgainBtn:hover { transform: scale(1.04); }
 
 .hidden { display: none; }
 
@@ -254,7 +442,7 @@ progress {
   100% { transform: scale(1); }
 }
 
-/* Confetti (Celebrate Wins LevelUp) */
+/* ---- Confetti ---- */
 .confetti-container {
   position: fixed;
   top: 0;
@@ -282,18 +470,10 @@ progress {
   100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 
-/* Responsive: wider layout for tablets/desktop */
+/* ---- Responsive: wider layout for tablets/desktop ---- */
 @media (min-width: 700px) {
-  .game-container {
-    max-width: 640px;
-  }
-  .battle-scene {
-    padding: 32px;
-  }
-  .game-title {
-    font-size: 3.5rem;
-  }
-  .moves {
-    flex-wrap: nowrap;
-  }
+  .game-container { max-width: 640px; }
+  .ogre { font-size: 10rem; }
+  .battlefield { height: 270px; }
+  .move-btn { font-size: 0.7rem; padding: 10px 14px; }
 }

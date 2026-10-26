@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waves — charity: water</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="brand-bar">
+    <span class="jerry-can">🟡</span>
+    <span class="brand-text">charity: water presents</span>
+  </header>
+
+  <main class="game-container">
+
+    <div class="scene">
+
+      <div class="top-row">
+        <div class="name-banner">
+          <span class="heart-icon box"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.3 8.6 2 5 5.5 5 8 5 9.8 6.6 12 9c2.2-2.4 4-4 6.5-4C22 5 23.7 8.6 22 11.8 19.5 16.4 12 21 12 21z"/></svg></span>
+          <h2 id="enemyName">E. COLI THE OGRE</h2>
+        </div>
+        <div class="timer">⏱ <span id="timerDisplay">60</span>s</div>
+      </div>
+
+      <div class="hp-strip">
+        <label for="enemyHPBar">Enemy HP</label>
+        <progress id="enemyHPBar" max="100" value="100"></progress>
+      </div>
+
+      <div class="battlefield">
+        <div class="well" aria-hidden="true"></div>
+        <div class="bush" aria-hidden="true"></div>
+
+        <span id="enemySprite" class="ogre">👹</span>
+
+        <div id="slashFX" class="slash-fx hidden">
+          <span class="slash s1"></span>
+          <span class="slash s2"></span>
+          <span class="slash s3"></span>
+        </div>
+
+        <span id="enemyDamagePop" class="damage-pop hidden"></span>
+      </div>
+
+      <p id="feedbackText" class="feedback"></p>
+
+      <div class="bottom-row">
+        <div class="moves-col">
+          <button class="move-btn" data-move="filter">
+            <span class="heart-icon small"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.3 8.6 2 5 5.5 5 8 5 9.8 6.6 12 9c2.2-2.4 4-4 6.5-4C22 5 23.7 8.6 22 11.8 19.5 16.4 12 21 12 21z"/></svg></span>
+            Filter
+          </button>
+          <button class="move-btn" data-move="disinfect">
+            <span class="heart-icon small"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.3 8.6 2 5 5.5 5 8 5 9.8 6.6 12 9c2.2-2.4 4-4 6.5-4C22 5 23.7 8.6 22 11.8 19.5 16.4 12 21 12 21z"/></svg></span>
+            Disinfect
+          </button>
+          <button class="move-btn" data-move="boil">
+            <span class="heart-icon small"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.3 8.6 2 5 5.5 5 8 5 9.8 6.6 12 9c2.2-2.4 4-4 6.5-4C22 5 23.7 8.6 22 11.8 19.5 16.4 12 21 12 21z"/></svg></span>
+            Boil
+          </button>
+        </div>
+
+        <div class="stats-col">
+          <div class="player-hp-card">
+            <label for="playerHPBar">YOUR HP</label>
+            <progress id="playerHPBar" max="100" value="100"></progress>
+            <span id="playerDamagePop" class="damage-pop hidden"></span>
+          </div>
+
+          <div class="supplies-grid" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="status-row">
+            <span class="coins"><span class="coin-icon">$</span> <span id="scoreDisplay">0</span></span>
+            <button id="resetBtn">Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="endModal" class="end-modal hidden">
+    <div class="end-modal-card">
+      <p id="endModalEmoji" class="end-modal-emoji"></p>
+      <h3 id="endModalTitle"></h3>
+      <p id="endModalCoins" class="end-modal-coins"></p>
+      <button id="tryAgainBtn">Try Again</button>
+    </div>
+  </div>
+
+  <div id="confettiContainer" class="confetti-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

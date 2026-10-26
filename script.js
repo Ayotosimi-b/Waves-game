@@ -31,12 +31,17 @@ const playerHPBar = document.getElementById("playerHPBar");
 const feedbackText = document.getElementById("feedbackText");
 const scoreDisplay = document.getElementById("scoreDisplay");
 const timerDisplay = document.getElementById("timerDisplay");
-const winBanner = document.getElementById("winBanner");
 const resetBtn = document.getElementById("resetBtn");
+const endModal = document.getElementById("endModal");
+const endModalEmoji = document.getElementById("endModalEmoji");
+const endModalTitle = document.getElementById("endModalTitle");
+const endModalCoins = document.getElementById("endModalCoins");
+const tryAgainBtn = document.getElementById("tryAgainBtn");
 const moveButtons = document.querySelectorAll(".move-btn");
 const confettiContainer = document.getElementById("confettiContainer");
 const enemySprite = document.getElementById("enemySprite");
-const playerSprite = document.getElementById("playerSprite");
+const slashFX = document.getElementById("slashFX");
+const sceneEl = document.querySelector(".scene");
 const enemyDamagePop = document.getElementById("enemyDamagePop");
 const playerDamagePop = document.getElementById("playerDamagePop");
 
@@ -69,17 +74,25 @@ function updateScore(amount) {
   scoreDisplay.textContent = score;
 }
 
-// ---- Sprite animation helpers ----
-function playAttackAnim(attackerSprite) {
-  attackerSprite.classList.remove("attacking");
-  void attackerSprite.offsetWidth; // restart animation if clicked again quickly
-  attackerSprite.classList.add("attacking");
+// ---- Animation helpers ----
+// Player's attack: slash lines sweep across the ogre, then it shakes.
+function playSlashEffect() {
+  slashFX.classList.remove("show");
+  void slashFX.offsetWidth; // restart if clicked again quickly
+  slashFX.classList.add("show");
 }
 
 function playHitAnim(targetSprite) {
   targetSprite.classList.remove("hit");
   void targetSprite.offsetWidth;
   targetSprite.classList.add("hit");
+}
+
+// Enemy's counterattack: whole scene flashes red since there's no player sprite.
+function playScreenFlash() {
+  sceneEl.classList.remove("screen-hit");
+  void sceneEl.offsetWidth;
+  sceneEl.classList.add("screen-hit");
 }
 
 function showDamagePop(popEl, amount) {
@@ -90,6 +103,17 @@ function showDamagePop(popEl, amount) {
   void popEl.offsetWidth;
   popEl.style.animation = "";
   setTimeout(() => popEl.classList.add("hidden"), 800);
+}
+
+// ---- End-of-battle popup ----
+function showEndModal(emoji, title, coinsThisBattle) {
+  endModalEmoji.textContent = emoji;
+  endModalTitle.textContent = title;
+  endModalCoins.textContent =
+    coinsThisBattle > 0
+      ? `You earned ${coinsThisBattle} coins from this battle!`
+      : "You earned 0 coins this battle.";
+  endModal.classList.remove("hidden");
 }
 
 // ---- Timer (core requirement) ----
@@ -113,6 +137,7 @@ function timeUp() {
   battleOver = true;
   feedbackText.textContent = "Time's up! The well stays contaminated.";
   setButtonsEnabled(false);
+  showEndModal("⏱️", "Time's Up!", 0);
 }
 
 // ---- Confetti (Celebrate Wins LevelUp) ----
@@ -146,7 +171,7 @@ function handleAttack(move) {
   const message = `${capitalize(move)} ${effectivenessText[move]}`;
   feedbackText.textContent = message;
 
-  playAttackAnim(playerSprite);
+  playSlashEffect();
   setTimeout(() => {
     playHitAnim(enemySprite);
     showDamagePop(enemyDamagePop, damage);
@@ -167,9 +192,8 @@ function handleAttack(move) {
     playerHP -= incoming;
     updateScore(-scorePenalty);
 
-    playAttackAnim(enemySprite);
+    playScreenFlash();
     setTimeout(() => {
-      playHitAnim(playerSprite);
       showDamagePop(playerDamagePop, incoming);
       updateBars();
       feedbackText.textContent = `${message} Enemy hits back for ${incoming} (-${scorePenalty} coins).`;
@@ -190,15 +214,16 @@ function winBattle() {
   clearInterval(timerInterval);
   updateScore(winReward);
   setButtonsEnabled(false);
-  winBanner.classList.remove("hidden");
   launchConfetti();
+  showEndModal("🎉", "Well Unlocked!", winReward);
 }
 
 function loseBattle() {
   battleOver = true;
   clearInterval(timerInterval);
-  feedbackText.textContent = "You were defeated. Try again?";
+  feedbackText.textContent = "You were defeated.";
   setButtonsEnabled(false);
+  showEndModal("💀", "Defeated! Try Again?", 0);
 }
 
 function resetBattle() {
@@ -206,10 +231,11 @@ function resetBattle() {
   enemyHP = maxHP;
   battleOver = false;
   feedbackText.textContent = "";
-  winBanner.classList.add("hidden");
+  endModal.classList.add("hidden");
   confettiContainer.innerHTML = "";
-  enemySprite.classList.remove("hit", "attacking");
-  playerSprite.classList.remove("hit", "attacking");
+  enemySprite.classList.remove("hit");
+  slashFX.classList.remove("show");
+  sceneEl.classList.remove("screen-hit");
   enemyDamagePop.classList.add("hidden");
   playerDamagePop.classList.add("hidden");
   updateBars();
@@ -223,6 +249,7 @@ moveButtons.forEach((btn) => {
 });
 
 resetBtn.addEventListener("click", resetBattle);
+tryAgainBtn.addEventListener("click", resetBattle);
 
 // ---- Initialize ----
 updateBars();
