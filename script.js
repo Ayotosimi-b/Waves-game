@@ -35,6 +35,10 @@ const winBanner = document.getElementById("winBanner");
 const resetBtn = document.getElementById("resetBtn");
 const moveButtons = document.querySelectorAll(".move-btn");
 const confettiContainer = document.getElementById("confettiContainer");
+const enemySprite = document.getElementById("enemySprite");
+const playerSprite = document.getElementById("playerSprite");
+const enemyDamagePop = document.getElementById("enemyDamagePop");
+const playerDamagePop = document.getElementById("playerDamagePop");
 
 const confettiColors = ["#FFC907", "#2E9DF7", "#FF902A", "#4FCB53", "#F5402C"];
 
@@ -63,6 +67,29 @@ function setButtonsEnabled(enabled) {
 function updateScore(amount) {
   score = Math.max(score + amount, 0);
   scoreDisplay.textContent = score;
+}
+
+// ---- Sprite animation helpers ----
+function playAttackAnim(attackerSprite) {
+  attackerSprite.classList.remove("attacking");
+  void attackerSprite.offsetWidth; // restart animation if clicked again quickly
+  attackerSprite.classList.add("attacking");
+}
+
+function playHitAnim(targetSprite) {
+  targetSprite.classList.remove("hit");
+  void targetSprite.offsetWidth;
+  targetSprite.classList.add("hit");
+}
+
+function showDamagePop(popEl, amount) {
+  popEl.textContent = `-${amount}`;
+  popEl.classList.remove("hidden");
+  // restart the float-up animation on repeat hits
+  popEl.style.animation = "none";
+  void popEl.offsetWidth;
+  popEl.style.animation = "";
+  setTimeout(() => popEl.classList.add("hidden"), 800);
 }
 
 // ---- Timer (core requirement) ----
@@ -109,34 +136,53 @@ function launchConfetti() {
 function handleAttack(move) {
   if (battleOver) return;
 
-  // Player's turn
+  setButtonsEnabled(false); // lock input while this turn's animation plays
+
+  // --- Beat 1: player's turn ---
   const multiplier = effectiveness[move];
   const damage = Math.round(baseDamage * multiplier);
   enemyHP -= damage;
 
   const message = `${capitalize(move)} ${effectivenessText[move]}`;
+  feedbackText.textContent = message;
 
-  if (enemyHP <= 0) {
-    enemyHP = 0;
+  playAttackAnim(playerSprite);
+  setTimeout(() => {
+    playHitAnim(enemySprite);
+    showDamagePop(enemyDamagePop, damage);
     updateBars();
-    feedbackText.textContent = message;
-    winBattle();
-    return;
-  }
+  }, 200);
 
-  // Enemy's turn (only if it's still standing).
-  // Challenge LevelUp: getting hit costs the player coins, not just HP.
-  const incoming = randomRange(enemyDamageRange.min, enemyDamageRange.max);
-  playerHP -= incoming;
-  updateScore(-scorePenalty);
-  updateBars();
-  feedbackText.textContent = `${message} Enemy hits back for ${incoming} (-${scorePenalty} coins).`;
+  setTimeout(() => {
+    if (enemyHP <= 0) {
+      enemyHP = 0;
+      updateBars();
+      winBattle();
+      return;
+    }
 
-  if (playerHP <= 0) {
-    playerHP = 0;
-    updateBars();
-    loseBattle();
-  }
+    // --- Beat 2: the monster attacks back ---
+    // Challenge LevelUp: getting hit costs the player coins, not just HP.
+    const incoming = randomRange(enemyDamageRange.min, enemyDamageRange.max);
+    playerHP -= incoming;
+    updateScore(-scorePenalty);
+
+    playAttackAnim(enemySprite);
+    setTimeout(() => {
+      playHitAnim(playerSprite);
+      showDamagePop(playerDamagePop, incoming);
+      updateBars();
+      feedbackText.textContent = `${message} Enemy hits back for ${incoming} (-${scorePenalty} coins).`;
+
+      if (playerHP <= 0) {
+        playerHP = 0;
+        updateBars();
+        loseBattle();
+      } else if (!battleOver) {
+        setButtonsEnabled(true);
+      }
+    }, 200);
+  }, 500);
 }
 
 function winBattle() {
@@ -162,6 +208,10 @@ function resetBattle() {
   feedbackText.textContent = "";
   winBanner.classList.add("hidden");
   confettiContainer.innerHTML = "";
+  enemySprite.classList.remove("hit", "attacking");
+  playerSprite.classList.remove("hit", "attacking");
+  enemyDamagePop.classList.add("hidden");
+  playerDamagePop.classList.add("hidden");
   updateBars();
   setButtonsEnabled(true);
   startTimer();

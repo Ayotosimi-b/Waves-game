@@ -96,6 +96,97 @@ progress {
   height: 16px;
 }
 
+/* Battle arena with the monster + player sprites */
+.arena {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 0 16px;
+}
+
+.combatant {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.enemy-side { align-items: flex-start; }
+.player-side { align-items: flex-end; }
+
+.vs-divider {
+  font-weight: bold;
+  color: var(--cw-yellow);
+  font-size: 0.9rem;
+  padding: 0 4px;
+}
+
+.sprite-stage {
+  position: relative;
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sprite {
+  font-size: 4rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.enemy-sprite { transform: scaleX(-1); } /* face the player */
+
+/* Monster shakes when YOU hit it */
+.sprite.hit {
+  animation: shake 0.35s ease;
+}
+
+/* Attacker lunges toward its target */
+.sprite.attack-enemy {
+  animation: lungeRight 0.4s ease;
+}
+.sprite.attack-player {
+  animation: lungeLeft 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: scaleX(-1) translateX(0); }
+  25% { transform: scaleX(-1) translateX(-6px); }
+  50% { transform: scaleX(-1) translateX(6px); }
+  75% { transform: scaleX(-1) translateX(-4px); }
+}
+
+@keyframes lungeRight {
+  0% { transform: scaleX(-1) translateX(0); }
+  50% { transform: scaleX(-1) translateX(24px); }
+  100% { transform: scaleX(-1) translateX(0); }
+}
+
+@keyframes lungeLeft {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-24px); }
+  100% { transform: translateX(0); }
+}
+
+.damage-pop {
+  position: absolute;
+  top: 0;
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #FF5C5C;
+  text-shadow: 1px 1px 0 var(--cw-dark);
+  animation: floatUp 0.8s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+
 .feedback {
   min-height: 24px;
   font-weight: bold;
